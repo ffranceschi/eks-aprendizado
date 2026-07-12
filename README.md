@@ -9,7 +9,7 @@ Kubernetes gerenciados na AWS.
   (para aprendizado, `AdministratorAccess` simplifica; em produção use um
   papel com escopo restrito).
 - `aws-cli` v2 autenticado (`aws sts get-caller-identity` deve funcionar).
-- `eksctl` (>= 0.180.0)
+- `eksctl` (>= 0.227.0)
 - `kubectl` (>= 1.28)
 - `helm` (>= 3.12)
 

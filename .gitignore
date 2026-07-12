@@ -5,3 +5,4 @@ kubeconfig*
 
 # artefatos de SO/editor
 .DS_Store
+.idea/

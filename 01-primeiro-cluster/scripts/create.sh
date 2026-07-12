@@ -17,4 +17,4 @@ eksctl create cluster -f "$CONFIG"
 
 echo
 echo "Cluster criado. Nodes:"
-kubectl get nodes
+kubectl get nodes || echo "(não foi possível listar os nodes agora — tente 'kubectl get nodes' novamente em alguns instantes)"

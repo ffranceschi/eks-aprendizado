@@ -6,7 +6,13 @@ kind: ClusterConfig
 metadata:
   name: eks-aprendizado-01
   region: us-east-1
-  version: "1.31"
+  # A versão do Kubernetes é escolhida pelo eksctl (fica sem "version:" de
+  # propósito) para evitar fixar uma versão que saia do "standard support"
+  # do EKS com o tempo — control plane em standard support custa ~US$0,10/h,
+  # em "extended support" custa ~US$0,60/h. Se quiser fixar uma versão
+  # específica, confira antes em
+  # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html
+  # que ela ainda está em standard support.
 
 managedNodeGroups:
   - name: ng-estudo
