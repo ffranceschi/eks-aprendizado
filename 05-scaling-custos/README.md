@@ -14,7 +14,10 @@ Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
 > (CloudFormation, IAM, Helm) que evoluem com frequência — confira sempre a
 > versão mais recente do Karpenter antes de rodar, e ajuste
 > `KARPENTER_VERSION` conforme a doc oficial. Não foi exercitado contra um
-> cluster de verdade nesta rodada.
+> cluster de verdade nesta rodada. O Karpenter é a única parte deste
+> projeto provisionada via CloudFormation (para as IAM Roles) — é uma
+> exceção consciente ao padrão eksctl/Helm do restante do repositório,
+> seguindo o guia oficial do Karpenter.
 
 ## Conceitos
 
@@ -28,8 +31,8 @@ Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
   interrupção (stateless, com múltiplas réplicas).
 - **HPA (Horizontal Pod Autoscaler)**: escala o número de réplicas de um
   Deployment com base em métricas (CPU, memória, ou métricas customizadas),
-  usando o `metrics-server` (já incluído por padrão em clusters EKS
-  gerenciados).
+  usando o `metrics-server` (**não vem instalado por padrão em clusters EKS
+  criados via eksctl** — precisa ser instalado à parte; veja o passo 6).
 - **Fargate profiles**: rodam pods sem node EC2 gerenciado por você —
   cobrado por pod (vCPU/memória solicitados), sem overhead de gerenciar
   instâncias.
@@ -117,7 +120,16 @@ Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
    kubectl get nodeclaims
    ```
 
-6. **HPA**: aplique o deployment com carga de CPU e observe o número de
+6. **HPA**: instale o `metrics-server` (pré-requisito do HPA, não vem por
+   padrão) e confirme que está coletando métricas antes de aplicar a carga:
+
+   ```bash
+   kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+   kubectl wait --for=condition=Available deployment/metrics-server -n kube-system --timeout=90s
+   kubectl top nodes
+   ```
+
+   Agora aplique o deployment com carga de CPU e observe o número de
    réplicas subir:
 
    ```bash

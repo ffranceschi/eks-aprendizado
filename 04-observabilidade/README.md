@@ -48,9 +48,13 @@ Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
      --attach-policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy \
      --approve
 
+   CW_ROLE_ARN=$(aws iam get-role --role-name "AmazonEKSCloudWatchRole-${CLUSTER_NAME}" --query "Role.Arn" --output text)
+
    aws eks create-addon \
      --cluster-name "$CLUSTER_NAME" --region "$AWS_REGION" \
-     --addon-name amazon-cloudwatch-observability
+     --addon-name amazon-cloudwatch-observability \
+     --service-account-role-arn "$CW_ROLE_ARN" \
+     --resolve-conflicts OVERWRITE
 
    aws eks describe-addon \
      --cluster-name "$CLUSTER_NAME" --region "$AWS_REGION" \

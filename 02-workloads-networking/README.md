@@ -118,7 +118,13 @@ Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
    kubectl delete -f manifests/ingress.yaml
    kubectl delete -f manifests/app.yaml
    ./scripts/destroy.sh
+
+   aws iam delete-policy --policy-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy-${CLUSTER_NAME}"
    ```
+
+   A policy IAM não é gerenciada pelo eksctl/CloudFormation, então precisa
+   ser deletada manualmente — senão uma próxima criação deste módulo falha
+   com `EntityAlreadyExists`.
 
 ## Próximo passo
 
