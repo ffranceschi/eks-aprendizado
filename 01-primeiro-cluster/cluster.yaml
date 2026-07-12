@@ -1,0 +1,19 @@
+# Config do eksctl para o primeiro cluster de estudo.
+# Edite "region" abaixo se quiser usar outra região AWS.
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-aprendizado-01
+  region: us-east-1
+  version: "1.31"
+
+managedNodeGroups:
+  - name: ng-estudo
+    instanceType: t3.medium
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 2
+    volumeSize: 20
+    labels:
+      modulo: 01-primeiro-cluster
