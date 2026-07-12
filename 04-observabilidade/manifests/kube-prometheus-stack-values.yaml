@@ -1,0 +1,15 @@
+# Values mínimos para caber confortavelmente em 2 nodes t3.medium.
+prometheus:
+  prometheusSpec:
+    retention: 6h
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+alertmanager:
+  enabled: false
+grafana:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi

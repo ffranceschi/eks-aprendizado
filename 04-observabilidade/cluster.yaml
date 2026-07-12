@@ -1,0 +1,28 @@
+# Config do eksctl para o cluster do módulo 04.
+# Edite "region" abaixo se quiser usar outra região AWS.
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-aprendizado-04
+  region: us-east-1
+  # A versão do Kubernetes é escolhida pelo eksctl (fica sem "version:" de
+  # propósito) para evitar fixar uma versão que saia do "standard support"
+  # do EKS com o tempo — control plane em standard support custa ~US$0,10/h,
+  # em "extended support" custa ~US$0,60/h. Se quiser fixar uma versão
+  # específica, confira antes em
+  # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html
+  # que ela ainda está em standard support.
+
+iam:
+  withOIDC: true
+
+managedNodeGroups:
+  - name: ng-estudo
+    instanceType: t3.medium
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 2
+    volumeSize: 20
+    labels:
+      modulo: 04-observabilidade
