@@ -46,7 +46,62 @@ Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
    integração de rede com a VPC (`aws-node` é o VPC CNI, que veremos em
    detalhe no módulo 02).
 
-4. Quando terminar de explorar, destrua o cluster para parar de ser
+4. Bônus — descubra qual instância está respondendo: faça o deploy de um
+   nginx com 2 réplicas (uma em cada node, via `podAntiAffinity`), onde cada
+   réplica serve uma página HTML mostrando o nome do node (a instância EC2)
+   que a está rodando. O nome do node vem da
+   [Downward API](https://kubernetes.io/docs/concepts/workloads/pods/downward-api/)
+   (`fieldRef: spec.nodeName`) — o kubelet injeta esse valor como variável de
+   ambiente no container, sem nenhuma chamada de rede extra.
+
+   ```bash
+   kubectl apply -f manifests/nginx-node-demo.yaml
+   kubectl rollout status deployment/nginx-node-demo
+   kubectl get pods -l app=nginx-node-demo -o wide
+   ```
+
+   Confirme que as duas réplicas caíram em nodes diferentes (coluna `NODE`).
+
+   Para acessar a página do seu terminal, use `port-forward`:
+
+   ```bash
+   kubectl port-forward svc/nginx-node-demo 8080:80
+   ```
+
+   E em outro terminal:
+
+   ```bash
+   curl http://localhost:8080/
+   ```
+
+   **Atenção**: `kubectl port-forward` para um Service prende a conexão a
+   **uma única pod** durante toda a sessão — ele não balanceia entre as
+   réplicas. Rodar `curl` várias vezes vai sempre mostrar o mesmo node. Isso
+   é uma particularidade do `port-forward` (ele resolve o Service para um
+   pod só uma vez), não de como o Service funciona de verdade dentro do
+   cluster.
+
+   Para ver o balanceamento de verdade entre os nodes, curle o Service de
+   **dentro** do cluster, onde o `kube-proxy` decide o destino a cada nova
+   conexão:
+
+   ```bash
+   kubectl run curltest --image=curlimages/curl:8.10.1 --restart=Never --rm -i --command -- \
+     sh -c 'for i in 1 2 3 4 5 6; do curl -s http://nginx-node-demo/ | grep "Node ("; done'
+   ```
+
+   Aqui as respostas alternam entre os dois nodes — é o Service (`ClusterIP`)
+   distribuindo as requisições entre as réplicas via `kube-proxy`. O
+   [módulo 02](../02-workloads-networking) explica Services e Ingress em
+   profundidade.
+
+   Limpe os recursos de teste quando terminar (o cluster continua no ar):
+
+   ```bash
+   kubectl delete -f manifests/nginx-node-demo.yaml
+   ```
+
+5. Quando terminar de explorar, destrua o cluster para parar de ser
    cobrado:
 
    ```bash
