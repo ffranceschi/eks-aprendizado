@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-html
+data:
+  index.html: |
+    <html>
+      <body>
+        <h1>App do módulo 02</h1>
+        <p>Conteúdo servido via ConfigMap montado como volume.</p>
+      </body>
+    </html>
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+type: Opaque
+stringData:
+  MENSAGEM_SECRETA: "isso veio de uma Secret, não de um ConfigMap"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-modulo02
+  labels:
+    app: app-modulo02
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app-modulo02
+  template:
+    metadata:
+      labels:
+        app: app-modulo02
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          envFrom:
+            - secretRef:
+                name: app-secret
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: html
+          configMap:
+            name: app-html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-modulo02
+spec:
+  selector:
+    app: app-modulo02
+  ports:
+    - port: 80
+      targetPort: 80
