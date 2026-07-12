@@ -3,7 +3,9 @@
 Objetivo: criar seu primeiro cluster EKS com `eksctl`, entender suas partes,
 e destruí-lo com segurança ao terminar.
 
-Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`.
+Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
+`AWS_PROFILE=ffranceschi-bedrock` exportado (veja
+[Conta e profile AWS](../README.md#conta-e-profile-aws) no README raiz).
 
 ## Conceitos
 

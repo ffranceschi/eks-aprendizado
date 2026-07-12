@@ -15,6 +15,23 @@ Kubernetes gerenciados na AWS.
 
 O módulo [`00-preparacao`](00-preparacao/) tem um script que verifica tudo isso.
 
+## Conta e profile AWS
+
+Este projeto usa a conta AWS `165690630776` através do profile
+`ffranceschi-bedrock` (já configurado via SSO em `~/.aws/config`). Antes de
+rodar qualquer script deste repositório, exporte o profile na sessão do
+terminal:
+
+```bash
+export AWS_PROFILE=ffranceschi-bedrock
+```
+
+Se a sessão SSO tiver expirado, renove com:
+
+```bash
+aws sso login --profile ffranceschi-bedrock
+```
+
 ## Aviso de custo
 
 Um cluster EKS cobra ~US$0,10/hora só pelo control plane, mais o custo dos

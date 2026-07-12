@@ -13,9 +13,11 @@ estão prontas. Este módulo não cria nenhum recurso na AWS.
 
 ## Verificação
 
-Rode o script de verificação:
+Exporte o profile AWS deste projeto (veja [Conta e profile AWS](../README.md#conta-e-profile-aws)
+no README raiz) e rode o script de verificação:
 
 ```bash
+export AWS_PROFILE=ffranceschi-bedrock
 ./verify.sh
 ```
 
