@@ -48,7 +48,7 @@ Nunca deixe um cluster rodando sem necessidade.
 | [02-workloads-networking](02-workloads-networking/) | Deployments, Services, Ingress, ALB Controller |
 | [03-iam-seguranca](03-iam-seguranca/) | IRSA, RBAC, Pod Security |
 | [04-observabilidade](04-observabilidade/) | CloudWatch Container Insights, Prometheus/Grafana |
-| 05-scaling-custos | HPA, Cluster Autoscaler/Karpenter, Spot, Fargate *(em breve)* |
+| [05-scaling-custos](05-scaling-custos/) | HPA, Karpenter, Spot, Fargate |
 
 Siga os módulos em ordem. Cada um assume um cluster novo, não o de um módulo
 anterior.
