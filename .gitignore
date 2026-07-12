@@ -1,0 +1,7 @@
+# kubeconfig e credenciais locais que scripts possam gerar
+kubeconfig*
+*.kubeconfig
+.envrc
+
+# artefatos de SO/editor
+.DS_Store
