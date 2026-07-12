@@ -1,0 +1,13 @@
+# Assume que a ServiceAccount "irsa-demo" já foi criada via
+# `eksctl create iamserviceaccount` (passo do README) — é ela que carrega a
+# annotation com o ARN da IAM Role. Este arquivo só declara o Pod.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: irsa-demo
+spec:
+  serviceAccountName: irsa-demo
+  containers:
+    - name: aws-cli
+      image: amazon/aws-cli:2.17.0
+      command: ["sleep", "3600"]

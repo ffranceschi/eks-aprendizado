@@ -1,0 +1,15 @@
+# Este manifest é PROPOSITALMENTE inválido para o padrão "restricted".
+# Aplique com `kubectl apply -f manifests/pod-privilegiado-rejeitado.yaml`
+# (depois do namespace "seguro" já existir) e observe o erro do admission
+# controller — não é um bug, é o comportamento esperado.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-privilegiado
+  namespace: seguro
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27-alpine
+      securityContext:
+        privileged: true
