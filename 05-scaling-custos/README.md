@@ -31,6 +31,16 @@ Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
 >    `--fail-swap-on=false`. Sem isso, os nodes provisionados pelo Karpenter
 >    nunca se registram no cluster (ficam presos, EC2 rodando mas sem
 >    aparecer em `kubectl get nodes`).
+> 4. Se você destruir e recriar o cluster **sem** rodar a limpeza completa
+>    do passo 9 (que apaga a `KarpenterControllerRole`), a role antiga
+>    sobrevive com a trust policy apontando para o OIDC provider do cluster
+>    *anterior* — que não existe mais. O `helm install` falha com
+>    `Deployment/kube-system/karpenter not ready` e o pod fica em
+>    `CrashLoopBackOff` com `AccessDeniedException: Not authorized to
+>    perform sts:AssumeRoleWithWebIdentity`. Corrija atualizando a trust
+>    policy da role para o OIDC provider atual (`aws eks describe-cluster
+>    ... --query cluster.identity.oidc.issuer`) com `aws iam
+>    update-assume-role-policy`, ou apague e recrie a role do zero.
 
 ## Conceitos
 
@@ -73,7 +83,7 @@ Pré-requisito: `../00-preparacao/verify.sh` passando sem `FAIL`, com
    SUBNET_IDS=$(aws ec2 describe-subnets --region "$AWS_REGION" \
      --filters "Name=vpc-id,Values=$VPC_ID" "Name=tag:kubernetes.io/role/internal-elb,Values=1" \
      --query "Subnets[].SubnetId" --output text)
-   for SUBNET in $SUBNET_IDS; do
+   echo "$SUBNET_IDS" | tr '\t' '\n' | while read -r SUBNET; do
      aws ec2 create-tags --region "$AWS_REGION" --resources "$SUBNET" --tags Key=karpenter.sh/discovery,Value="$CLUSTER_NAME"
    done
 
