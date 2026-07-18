@@ -17,6 +17,13 @@ spec:
         - key: karpenter.k8s.aws/instance-category
           operator: In
           values: ["t", "m"]
+        - key: karpenter.k8s.aws/instance-size
+          operator: NotIn
+          # nano/micro têm limite de pods por ENI tão baixo que não sobra
+          # espaço para workloads depois dos daemonsets do sistema — o
+          # Karpenter escolhe o menor tipo permitido, então sem esse filtro
+          # ele cria node atrás de node sem nunca caber o pod (loop de custo).
+          values: ["nano", "micro"]
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
@@ -32,7 +39,8 @@ kind: EC2NodeClass
 metadata:
   name: default
 spec:
-  amiFamily: AL2023
+  amiSelectorTerms:
+    - alias: al2023@latest
   role: "KarpenterNodeRole-eks-aprendizado-05"
   subnetSelectorTerms:
     - tags:
@@ -40,3 +48,14 @@ spec:
   securityGroupSelectorTerms:
     - tags:
         karpenter.sh/discovery: eks-aprendizado-05
+  # A AMI AL2023 vem com swap (zram) habilitado por padrão, e o kubelet
+  # recusa iniciar com swap ligado sem essa flag — sem isso o node nunca
+  # se registra no cluster (kubelet.service fica em "Failed with result
+  # 'exit-code'": "running with swap on is not supported").
+  userData: |
+    apiVersion: node.eks.aws/v1alpha1
+    kind: NodeConfig
+    spec:
+      kubelet:
+        flags:
+          - "--fail-swap-on=false"
